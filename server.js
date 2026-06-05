@@ -1,16 +1,18 @@
-'use strict';
 // Server Tools — passive-only backend. Zero npm dependencies (Node built-ins only).
 // The server ONLY talks to DNS resolvers and to RDAP/registry WHOIS over HTTPS.
 // It never connects to arbitrary user-supplied hosts/ports -> no SSRF, no scan-proxy.
 
-const http = require('node:http');
-const fs   = require('node:fs');
-const path = require('node:path');
-const net  = require('node:net');
-const dns  = require('node:dns').promises;
+import http from 'node:http';
+import fs from 'node:fs';
+import path from 'node:path';
+import net from 'node:net';
+import { promises as dns } from 'node:dns';
+import { fileURLToPath } from 'node:url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const PORT   = process.env.PORT || 8099;
-const PUBLIC = path.join(__dirname, 'public');
+const PUBLIC = path.join(__dirname, 'dist');
 
 // ---------- tiny per-IP rate limit (in-memory) ----------
 const RL = new Map();
@@ -149,10 +151,20 @@ const TYPES = {
 function serveStatic(pathname, res) {
   let rel = decodeURIComponent(pathname);
   if (rel === '/' || rel === '') rel = '/index.html';
-  const fp = path.join(PUBLIC, rel);
+  let fp = path.join(PUBLIC, rel);
   if (!fp.startsWith(PUBLIC)) { res.writeHead(403).end('Forbidden'); return; }
   fs.readFile(fp, (err, data) => {
-    if (err) { res.writeHead(404, { 'content-type': 'text/plain' }).end('Not found'); return; }
+    if (err) {
+      // SPA fallback: serve index.html for client-side routes (no file extension)
+      if (!path.extname(fp)) {
+        fs.readFile(path.join(PUBLIC, 'index.html'), (e2, html) => {
+          if (e2) { res.writeHead(404, { 'content-type': 'text/plain' }).end('Not found'); return; }
+          res.writeHead(200, { 'content-type': 'text/html; charset=utf-8' }).end(html);
+        });
+        return;
+      }
+      res.writeHead(404, { 'content-type': 'text/plain' }).end('Not found'); return;
+    }
     const type = TYPES[path.extname(fp).toLowerCase()] || 'application/octet-stream';
     res.writeHead(200, { 'content-type': type + (type.startsWith('text') ? '; charset=utf-8' : '') });
     res.end(data);
@@ -189,4 +201,5 @@ const server = http.createServer((req, res) => {
   serveStatic(u.pathname, res);
 });
 
-server.listen(PORT, () => console.log('Server Tools → http://localhost:' + PORT));
+const isMain = process.argv[1] === fileURLToPath(import.meta.url);
+if (isMain) server.listen(PORT, () => console.log('Server Tools → http://localhost:' + PORT));
