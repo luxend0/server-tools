@@ -82,18 +82,19 @@ export default function ToolCard({ tool }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [values]);
   return (
-    <section className="card" id={tool.id}>
-      <h3>{tool.title}</h3>
-      {tool.inputs.map((spec) => (
-        <Input key={spec.id} spec={spec} value={values[spec.id]} onChange={onChange} />
-      ))}
-      <div className="actions">
-        {tool.actions.map((a) => (
-          <button key={a.label} type="button" disabled={pending} onClick={() => run(a)}>{a.label}</button>
+    <section className="panel" id={tool.id}>
+      <div className="panel-body">
+        {tool.inputs.map((spec) => (
+          <Input key={spec.id} spec={spec} value={values[spec.id]} onChange={onChange} />
         ))}
+        <div className="actions">
+          {tool.actions.map((a) => (
+            <button key={a.label} type="button" disabled={pending} onClick={() => run(a)}>{a.label}</button>
+          ))}
+        </div>
+        {tool.preview && <div ref={previewRef} className="preview" />}
+        <Result value={out.value} error={out.error} />
       </div>
-      {tool.preview && <div ref={previewRef} className="preview" />}
-      <Result value={out.value} error={out.error} />
     </section>
   );
 }

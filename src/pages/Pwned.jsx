@@ -15,16 +15,18 @@ function PasswordTab() {
   };
   return (
     <div>
-      <p className="note">🔒 Das Passwort verlässt den Browser nicht. Es wird lokal mit SHA-1
-        gehasht; nur die ersten 5 Hash-Zeichen werden gesendet (k-Anonymität).</p>
-      <input type="password" value={pw} placeholder="Passwort"
-        onChange={(e) => setPw(e.target.value)} />
-      <button type="button" onClick={run}>Prüfen</button>
-      {state.status === 'loading' && <p>Prüfe…</p>}
+      <p className="note">Das passwort verlässt den browser nicht. Es wird lokal mit SHA-1 gehasht;
+        nur die ersten 5 hash-zeichen werden gesendet (k-anonymität).</p>
+      <input type="password" value={pw} placeholder="passwort eingeben…"
+        onChange={(e) => setPw(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && run()} />
+      <div className="actions">
+        <button type="button" onClick={run} disabled={state.status === 'loading'}>prüfen</button>
+      </div>
+      {state.status === 'loading' && <p className="statusmsg">prüfe…</p>}
       {state.status === 'error' && <p className="result error">{state.error}</p>}
       {state.status === 'done' && (state.count > 0
-        ? <p className="result error">⚠ In {state.count.toLocaleString('de-DE')} Datenlecks gefunden — nicht verwenden.</p>
-        : <p className="result ok">✓ In keinem bekannten Datenleck gefunden.</p>)}
+        ? <div className="verdict alarm">⚠ in {state.count.toLocaleString('de-DE')} datenlecks gefunden — nicht verwenden.</div>
+        : <div className="verdict clean">✓ in keinem bekannten datenleck gefunden.</div>)}
     </div>
   );
 }
@@ -42,16 +44,18 @@ function EmailTab() {
   return (
     <div>
       <input type="email" value={email} placeholder="name@example.com"
-        onChange={(e) => setEmail(e.target.value)} />
-      <button type="button" onClick={run}>Prüfen</button>
-      {state.status === 'loading' && <p>Prüfe…</p>}
+        onChange={(e) => setEmail(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && run()} />
+      <div className="actions">
+        <button type="button" onClick={run} disabled={state.status === 'loading'}>prüfen</button>
+      </div>
+      {state.status === 'loading' && <p className="statusmsg">prüfe…</p>}
       {state.status === 'error' && <p className="result error">{state.error}</p>}
       {state.status === 'done' && state.data && (
         state.data.configured === false
-          ? <p className="note">E-Mail-Prüfung ist nicht konfiguriert (kein HIBP_KEY gesetzt).</p>
+          ? <p className="note">E-Mail-prüfung ist nicht konfiguriert (kein HIBP_KEY gesetzt).</p>
           : state.data.breaches.length === 0
-            ? <p className="result ok">✓ In keinem bekannten Datenleck gefunden.</p>
-            : <ul className="breaches">{state.data.breaches.map((b) => (
+            ? <div className="verdict clean">✓ in keinem bekannten datenleck gefunden.</div>
+            : <ul className="data-list">{state.data.breaches.map((b) => (
                 <li key={b.name}><strong>{b.title}</strong> ({b.date}) — {b.data.join(', ')}</li>
               ))}</ul>
       )}
@@ -62,7 +66,9 @@ function EmailTab() {
 export default function Pwned() {
   return (
     <div>
-      <h1>Have I Been Pwned</h1>
+      <p className="kicker">// have i been pwned</p>
+      <h1 className="title">Pwned?</h1>
+      <p className="lead">Passwort- und E-Mail-leak-check gegen die HIBP-datenbank.</p>
       <Tabs.Root defaultValue="password">
         <Tabs.List>
           <Tabs.Trigger value="password">Passwort</Tabs.Trigger>

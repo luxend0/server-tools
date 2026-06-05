@@ -1,40 +1,46 @@
 import { NavLink, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home.jsx';
 import Tools from './pages/Tools.jsx';
+import ToolPage from './pages/ToolPage.jsx';
 import Pwned from './pages/Pwned.jsx';
 import Infected from './pages/Infected.jsx';
 
 const LINKS = [
   { to: '/', label: 'Home', end: true },
   { to: '/tools', label: 'Tools' },
-  { to: '/pwned', label: 'Have I Been Pwned' },
-  { to: '/infected', label: 'Server infiziert?' },
+  { to: '/pwned', label: 'Pwned' },
+  { to: '/infected', label: 'Infected' },
 ];
 
 export default function App() {
   return (
-    <div className="layout">
-      <header>
-        <div className="brand">🛠 <span>Server Tools</span></div>
+    <div className="term">
+      <header className="topbar">
+        <NavLink to="/" className="brand">server<b>//</b>tools<i className="cursor" /></NavLink>
+        <nav className="mainnav">
+          {LINKS.map((l) => (
+            <NavLink key={l.to} to={l.to} end={l.end}
+              className={({ isActive }) => 'navlink' + (isActive ? ' active' : '')}>
+              {l.label}
+            </NavLink>
+          ))}
+        </nav>
       </header>
-      <aside className="nav">
-        {LINKS.map((l) => (
-          <NavLink key={l.to} to={l.to} end={l.end}
-            className={({ isActive }) => 'navlink' + (isActive ? ' active' : '')}>
-            {l.label}
-          </NavLink>
-        ))}
-      </aside>
-      <main className="content">
+      <main className="screen">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/tools" element={<Tools />} />
+          <Route path="/tools/:id" element={<ToolPage />} />
           <Route path="/pwned" element={<Pwned />} />
           <Route path="/infected" element={<Infected />} />
         </Routes>
       </main>
-      <footer>
-        <span className="safe">🔒 Passiv &amp; abuse-sicher</span> — Offline-Tools laufen im Browser; das Backend spricht nur mit DNS-Resolvern, RDAP und festen, bekannten HIBP-Endpunkten. Kein Port-Scanner, keine SSRF.
+      <footer className="statusline">
+        <span className="ok">● passive</span>
+        <span className="sep">/</span>
+        <span>backend spricht nur mit DNS · rdap.org · api.pwnedpasswords.com · haveibeenpwned.com (nur mit HIBP_KEY)</span>
+        <span className="sep">/</span>
+        <span>kein port-scan · keine SSRF</span>
       </footer>
     </div>
   );

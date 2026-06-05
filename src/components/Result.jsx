@@ -10,7 +10,7 @@ export default function Result({ value, error }) {
   };
   return (
     <div className="result-wrap">
-      <button type="button" className="copy" onClick={copy}>{copied ? '✓ kopiert' : 'Kopieren'}</button>
+      <button type="button" className="copy" onClick={copy}>{copied ? '✓ copied' : 'copy'}</button>
       <pre className="result">{String(value)}</pre>
     </div>
   );
