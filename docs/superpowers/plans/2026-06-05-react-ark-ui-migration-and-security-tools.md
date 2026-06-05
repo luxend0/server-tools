@@ -672,10 +672,17 @@ describe('hibp client', () => {
 
 - [ ] **Step 2: Add Vitest config + setup, run test to confirm it fails**
 
-Create `vitest.config.js`:
+Create `vitest.config.js` (scope `include` to `src/` so vitest does NOT try to run the node:test file `server.test.js`):
 ```js
 import { defineConfig } from 'vitest/config';
-export default defineConfig({ test: { environment: 'jsdom', setupFiles: ['./vitest.setup.js'], globals: true } });
+export default defineConfig({
+  test: {
+    environment: 'jsdom',
+    setupFiles: ['./vitest.setup.js'],
+    globals: true,
+    include: ['src/**/*.test.{js,jsx}'],
+  },
+});
 ```
 Create `vitest.setup.js`:
 ```js
