@@ -96,3 +96,4 @@ footer .safe { color: var(--ok); font-weight: 600; }
 .result.error { color: var(--err); } .result-wrap { position: relative; }
 .copy { position: absolute; right: .4rem; top: .4rem; }
 .search { width: 100%; max-width: 480px; padding: .5rem .8rem; }
+.preview { margin-top: .6rem; min-height: 64px; border-radius: 10px; border: 1px solid var(--border); display: grid; place-items: center; }

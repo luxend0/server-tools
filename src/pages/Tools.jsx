@@ -18,7 +18,7 @@ export default function Tools() {
   return (
     <div>
       <div className="search-wrap">
-        <input className="search" value={q} placeholder="Tool suchen…"
+        <input className="search" aria-label="Tool suchen" value={q} placeholder="Tool suchen…"
           onChange={(e) => setQ(e.target.value)} />
         <span className="count">{filtered.length} / {TOOLS.length}</span>
       </div>

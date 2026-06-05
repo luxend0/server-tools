@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Field } from '@ark-ui/react/field';
 import { Checkbox } from '@ark-ui/react/checkbox';
 import Result from './Result.jsx';
@@ -38,7 +38,7 @@ function Input({ spec, value, onChange }) {
   return (
     <Field.Root>
       <Field.Label>{spec.label}</Field.Label>
-      <Field.Input type={spec.type === 'number' ? 'number' : 'text'} value={value}
+      <Field.Input type={spec.type} value={value}
         placeholder={spec.placeholder} onChange={(e) => set(e.target.value)} />
     </Field.Root>
   );
@@ -47,10 +47,20 @@ function Input({ spec, value, onChange }) {
 export default function ToolCard({ tool }) {
   const [values, setValues] = useState(() => initialValues(tool.inputs));
   const [out, setOut] = useState({ value: null, error: null });
+  const [pending, setPending] = useState(false);
+  const previewRef = useRef(null);
   const onChange = (id, val) => setValues((v) => ({ ...v, [id]: val }));
   const run = async (action) => {
-    try { const r = await action.run(values); setOut({ value: r, error: null }); }
-    catch (e) { setOut({ value: null, error: e.message || String(e) }); }
+    if (pending) return;
+    setPending(true);
+    try {
+      const r = await action.run(values, { preview: previewRef.current });
+      setOut({ value: r, error: null });
+    } catch (e) {
+      setOut({ value: null, error: e.message || String(e) });
+    } finally {
+      setPending(false);
+    }
   };
   return (
     <section className="card" id={tool.id}>
@@ -60,9 +70,10 @@ export default function ToolCard({ tool }) {
       ))}
       <div className="actions">
         {tool.actions.map((a) => (
-          <button key={a.label} type="button" onClick={() => run(a)}>{a.label}</button>
+          <button key={a.label} type="button" disabled={pending} onClick={() => run(a)}>{a.label}</button>
         ))}
       </div>
+      {tool.preview && <div ref={previewRef} className="preview" />}
       <Result value={out.value} error={out.error} />
     </section>
   );
