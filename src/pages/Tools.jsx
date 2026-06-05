@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Search, LayoutGrid } from 'lucide-react';
 import { TOOLS, CAT_ORDER } from '../tools/index.js';
+import { iconForTool, iconForCat } from '../lib/catmeta.jsx';
 
 export default function Tools() {
   const [q, setQ] = useState('');
@@ -30,34 +32,47 @@ export default function Tools() {
   }, []);
   return (
     <div>
-      <p className="kicker">// index</p>
-      <h1 className="title">Tools</h1>
-      <p className="lead">{TOOLS.length} offline- &amp; netzwerk-utilities. Taste <strong>/</strong> fokussiert den filter.</p>
+      <div className="page-head">
+        <LayoutGrid size={28} strokeWidth={1.5} />
+        <div>
+          <p className="kicker">// index</p>
+          <h1 className="title">Tools</h1>
+        </div>
+      </div>
+      <p className="lead">{TOOLS.length} offline &amp; network utilities. Press <strong>/</strong> to focus the filter.</p>
       <div className="search-bar">
-        <span className="prompt">&gt;</span>
-        <input ref={inputRef} aria-label="Tool filtern" value={q}
+        <Search size={15} />
+        <input ref={inputRef} aria-label="Filter tools" value={q}
           placeholder="filter… (id · name · keyword)" onChange={(e) => setQ(e.target.value)} />
         <span className="count">[ {filtered.length} // {TOOLS.length} ]</span>
       </div>
-      {filtered.length === 0 && <p className="empty-msg">// keine treffer für &quot;{q}&quot;</p>}
-      {CAT_ORDER.filter((cat) => byCat[cat]).map((cat) => (
-        <section key={cat}>
-          <div className="sect-head">
-            <h2>{cat}</h2>
-            <span className="fill" />
-            <span className="meta">{byCat[cat].length}</span>
-          </div>
-          <div className="tiles">
-            {byCat[cat].map((t) => (
-              <Link key={t.id} to={'/tools/' + t.id} className="tile">
-                <span className="tile-id">{t.id}</span>
-                <span className="tile-title">{t.title}</span>
-                {t.kw && <span className="tile-kw">{t.kw}</span>}
-              </Link>
-            ))}
-          </div>
-        </section>
-      ))}
+      {filtered.length === 0 && <p className="empty-msg">// no matches for &quot;{q}&quot;</p>}
+      {CAT_ORDER.filter((cat) => byCat[cat]).map((cat) => {
+        const CatIcon = iconForCat(cat);
+        return (
+          <section key={cat}>
+            <div className="sect-head">
+              <span className="sect-ico"><CatIcon size={15} strokeWidth={1.75} /></span>
+              <h2>{cat}</h2>
+              <span className="fill" />
+              <span className="meta">{byCat[cat].length}</span>
+            </div>
+            <div className="tiles">
+              {byCat[cat].map((t) => {
+                const Icon = iconForTool(t);
+                return (
+                  <Link key={t.id} to={'/tools/' + t.id} className="tile">
+                    <span className="tile-ico"><Icon size={18} strokeWidth={1.5} /></span>
+                    <span className="tile-id">{t.id}</span>
+                    <span className="tile-title">{t.title}</span>
+                    {t.kw && <span className="tile-kw">{t.kw}</span>}
+                  </Link>
+                );
+              })}
+            </div>
+          </section>
+        );
+      })}
     </div>
   );
 }

@@ -296,6 +296,61 @@ button:disabled { opacity: .4; cursor: default; transform: none; background: var
 .home-card .go { margin-top: auto; font-size: 12px; color: var(--dim); letter-spacing: .1em; }
 .home-card:hover .go { color: var(--inv-fg); }
 
+/* ============================ ICONS + VISUAL LAYER ============================ */
+/* faint blueprint grid behind everything (sits under the scanline overlay) */
+body {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, .014) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, .014) 1px, transparent 1px);
+  background-size: 48px 48px;
+  background-attachment: fixed;
+}
+.lucide { flex: none; vertical-align: middle; }
+
+/* nav icons replace the arrow glyphs */
+.navlink { gap: .5em; }
+.navlink::before, .navlink:hover::before, .navlink.active::before { content: none; }
+.navlink .lucide { opacity: .85; }
+.navlink.active .lucide { opacity: 1; }
+
+/* section header icon (drops the "##" prefix) */
+.sect-head h2::before { content: none; }
+.sect-ico { display: inline-flex; color: var(--ink-2); }
+
+/* tiles get a tool icon */
+.tile { min-height: 88px; }
+.tile-ico { color: var(--ink-2); margin-bottom: .1rem; }
+.tile:hover .tile-ico { color: var(--inv-fg); }
+
+/* tool-page header icon */
+.th-left { display: flex; gap: .9rem; align-items: flex-start; }
+.th-ico { display: inline-flex; color: var(--ink); border: 1px solid var(--bord); padding: .5rem; background: var(--bg-1); }
+
+/* note / page callouts with a leading icon */
+.note { display: flex; gap: .55rem; align-items: flex-start; }
+.note::before { content: none; }
+.note .lucide { color: var(--dim); margin-top: .1rem; }
+.page-head { display: flex; align-items: center; gap: .7rem; }
+.page-head .lucide { color: var(--ink-2); }
+
+/* verdict icons */
+.verdict { gap: .6rem; }
+.verdict .lucide { flex: none; }
+
+/* copy button icon */
+.copy { display: inline-flex; align-items: center; gap: .35em; }
+
+/* home: hero graphic + card icons */
+.home-hero { display: grid; grid-template-columns: 1.4fr 1fr; gap: 1.4rem; align-items: center;
+  border: 1px solid var(--bord); background: var(--bg-1); padding: 1.6rem 1.5rem; margin-bottom: 1.8rem; }
+.home-hero .hero-text { min-width: 0; }
+.home-hero .lead { margin-bottom: 0; }
+.hero-graphic { width: 100%; height: auto; color: var(--ink-2); }
+.hero-graphic .dim { color: var(--bord-2); }
+.home-ico { display: inline-flex; color: var(--ink); margin-bottom: .3rem; }
+.home-card:hover .home-ico { color: var(--inv-fg); }
+.home-card .go { display: inline-flex; align-items: center; gap: .4em; }
+
 /* ============================ RESPONSIVE ============================ */
 @media (max-width: 680px) {
   .topbar { flex-direction: column; align-items: stretch; }
@@ -303,4 +358,6 @@ button:disabled { opacity: .4; cursor: default; transform: none; background: var
   .field-row { grid-template-columns: 1fr; }
   .kv { flex-direction: column; gap: .1rem; }
   .kv .k { min-width: 0; }
+  .home-hero { grid-template-columns: 1fr; }
+  .home-hero .hero-graphic { display: none; }
 }

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Tabs } from '@ark-ui/react/tabs';
+import { ShieldAlert, Lock, ShieldCheck, ShieldX, Info } from 'lucide-react';
 import { api } from '../lib/api.js';
 import { checkPassword } from '../lib/hibp.js';
 
@@ -15,18 +16,18 @@ function PasswordTab() {
   };
   return (
     <div>
-      <p className="note">Das passwort verlässt den browser nicht. Es wird lokal mit SHA-1 gehasht;
-        nur die ersten 5 hash-zeichen werden gesendet (k-anonymität).</p>
-      <input type="password" value={pw} placeholder="passwort eingeben…"
+      <p className="note"><Lock size={14} /><span>Your password never leaves the browser. It is hashed locally with
+        SHA-1; only the first 5 hash characters are sent (k-anonymity).</span></p>
+      <input type="password" value={pw} placeholder="enter a password…"
         onChange={(e) => setPw(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && run()} />
       <div className="actions">
-        <button type="button" onClick={run} disabled={state.status === 'loading'}>prüfen</button>
+        <button type="button" onClick={run} disabled={state.status === 'loading'}>check</button>
       </div>
-      {state.status === 'loading' && <p className="statusmsg">prüfe…</p>}
+      {state.status === 'loading' && <p className="statusmsg">checking…</p>}
       {state.status === 'error' && <p className="result error">{state.error}</p>}
       {state.status === 'done' && (state.count > 0
-        ? <div className="verdict alarm">⚠ in {state.count.toLocaleString('de-DE')} datenlecks gefunden — nicht verwenden.</div>
-        : <div className="verdict clean">✓ in keinem bekannten datenleck gefunden.</div>)}
+        ? <div className="verdict alarm"><ShieldX size={16} /> found in {state.count.toLocaleString('en-US')} breaches — do not use it.</div>
+        : <div className="verdict clean"><ShieldCheck size={16} /> not found in any known breach.</div>)}
     </div>
   );
 }
@@ -46,15 +47,15 @@ function EmailTab() {
       <input type="email" value={email} placeholder="name@example.com"
         onChange={(e) => setEmail(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && run()} />
       <div className="actions">
-        <button type="button" onClick={run} disabled={state.status === 'loading'}>prüfen</button>
+        <button type="button" onClick={run} disabled={state.status === 'loading'}>check</button>
       </div>
-      {state.status === 'loading' && <p className="statusmsg">prüfe…</p>}
+      {state.status === 'loading' && <p className="statusmsg">checking…</p>}
       {state.status === 'error' && <p className="result error">{state.error}</p>}
       {state.status === 'done' && state.data && (
         state.data.configured === false
-          ? <p className="note">E-Mail-prüfung ist nicht konfiguriert (kein HIBP_KEY gesetzt).</p>
+          ? <p className="note"><Info size={14} /><span>Email check is not configured (no HIBP_KEY set).</span></p>
           : state.data.breaches.length === 0
-            ? <div className="verdict clean">✓ in keinem bekannten datenleck gefunden.</div>
+            ? <div className="verdict clean"><ShieldCheck size={16} /> not found in any known breach.</div>
             : <ul className="data-list">{state.data.breaches.map((b) => (
                 <li key={b.name}><strong>{b.title}</strong> ({b.date}) — {b.data.join(', ')}</li>
               ))}</ul>
@@ -66,13 +67,18 @@ function EmailTab() {
 export default function Pwned() {
   return (
     <div>
-      <p className="kicker">// have i been pwned</p>
-      <h1 className="title">Pwned?</h1>
-      <p className="lead">Passwort- und E-Mail-leak-check gegen die HIBP-datenbank.</p>
+      <div className="page-head">
+        <ShieldAlert size={28} strokeWidth={1.5} />
+        <div>
+          <p className="kicker">// have i been pwned</p>
+          <h1 className="title">Pwned?</h1>
+        </div>
+      </div>
+      <p className="lead">Password and email leak checks against the HIBP database.</p>
       <Tabs.Root defaultValue="password">
         <Tabs.List>
-          <Tabs.Trigger value="password">Passwort</Tabs.Trigger>
-          <Tabs.Trigger value="email">E-Mail</Tabs.Trigger>
+          <Tabs.Trigger value="password">Password</Tabs.Trigger>
+          <Tabs.Trigger value="email">Email</Tabs.Trigger>
           <Tabs.Indicator />
         </Tabs.List>
         <Tabs.Content value="password"><PasswordTab /></Tabs.Content>

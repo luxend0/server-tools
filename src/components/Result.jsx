@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Copy, Check } from 'lucide-react';
 
 export default function Result({ value, error }) {
   const [copied, setCopied] = useState(false);
@@ -10,7 +11,9 @@ export default function Result({ value, error }) {
   };
   return (
     <div className="result-wrap">
-      <button type="button" className="copy" onClick={copy}>{copied ? '✓ copied' : 'copy'}</button>
+      <button type="button" className="copy" onClick={copy}>
+        {copied ? <><Check size={12} /> copied</> : <><Copy size={12} /> copy</>}
+      </button>
       <pre className="result">{String(value)}</pre>
     </div>
   );

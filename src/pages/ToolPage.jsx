@@ -1,5 +1,6 @@
 import { Link, useParams } from 'react-router-dom';
 import { TOOLS } from '../tools/index.js';
+import { iconForTool } from '../lib/catmeta.jsx';
 import ToolCard from '../components/ToolCard.jsx';
 
 export default function ToolPage() {
@@ -11,13 +12,14 @@ export default function ToolPage() {
     return (
       <div>
         <p className="kicker">// 404</p>
-        <h1 className="title">Unbekanntes Tool</h1>
-        <p className="lead">Kein Tool mit der ID <code>{id}</code>.</p>
-        <Link to="/tools" className="ghost">&lt; zurück zum index</Link>
+        <h1 className="title">Unknown tool</h1>
+        <p className="lead">No tool with id <code>{id}</code>.</p>
+        <Link to="/tools" className="ghost">&lt; back to index</Link>
       </div>
     );
   }
 
+  const Icon = iconForTool(tool);
   const prev = TOOLS[idx - 1];
   const next = TOOLS[idx + 1];
 
@@ -29,9 +31,12 @@ export default function ToolPage() {
         <span className="here">{tool.id}</span>
       </div>
       <div className="toolpage-head">
-        <div>
-          <h1 className="title">{tool.title}</h1>
-          <div className="id">&rsaquo; {tool.id}</div>
+        <div className="th-left">
+          <span className="th-ico"><Icon size={26} strokeWidth={1.5} /></span>
+          <div>
+            <h1 className="title">{tool.title}</h1>
+            <div className="id">&rsaquo; {tool.id}</div>
+          </div>
         </div>
         <span className="tag inv">{tool.cat}</span>
       </div>
