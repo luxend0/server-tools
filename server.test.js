@@ -1,6 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { parsePwnedRange } from './server.js';
+import { hibpEmailConfigured } from './server.js';
 
 test('parsePwnedRange counts a matching suffix', () => {
   // body lines are "SUFFIX:COUNT" (suffix = SHA1 hash minus first 5 chars)
@@ -10,4 +11,10 @@ test('parsePwnedRange counts a matching suffix', () => {
 
 test('parsePwnedRange returns 0 when suffix absent', () => {
   assert.equal(parsePwnedRange('ABC:5', 'DEADBEEF'), 0);
+});
+
+test('hibpEmailConfigured reflects env presence', () => {
+  assert.equal(hibpEmailConfigured(''), false);
+  assert.equal(hibpEmailConfigured(undefined), false);
+  assert.equal(hibpEmailConfigured('abc123'), true);
 });

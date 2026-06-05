@@ -135,6 +135,34 @@ async function apiAsn({ asn }) {
 
 const HIBP_PW_HOST = 'https://api.pwnedpasswords.com';
 
+const HIBP_KEY = process.env.HIBP_KEY || '';
+export const hibpEmailConfigured = (key = HIBP_KEY) => Boolean(key && String(key).trim());
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+async function apiHibpEmail({ email }) {
+  if (!hibpEmailConfigured()) return { configured: false, breaches: [] };
+  if (!EMAIL_RE.test(String(email || ''))) throw new Error('Ungültige E-Mail');
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), 8000);
+  try {
+    const url = 'https://haveibeenpwned.com/api/v3/breachedaccount/' +
+      encodeURIComponent(email) + '?truncateResponse=false';
+    const r = await fetch(url, { signal: ctrl.signal,
+      headers: { 'hibp-api-key': HIBP_KEY, 'user-agent': 'server-tools' } });
+    if (r.status === 404) return { configured: true, breaches: [] }; // none found
+    if (!r.ok) throw new Error('HIBP HTTP ' + r.status);
+    const list = await r.json();
+    const breaches = (Array.isArray(list) ? list : []).map((b) => ({
+      name: b.Name, title: b.Title, date: b.BreachDate, count: b.PwnCount,
+      data: b.DataClasses || [],
+    }));
+    return { configured: true, breaches };
+  } catch (e) {
+    if (e.name === 'AbortError') throw new Error('Timeout (HIBP nicht erreichbar)');
+    throw e;
+  } finally { clearTimeout(timer); }
+}
+
 export function parsePwnedRange(body, suffix) {
   suffix = String(suffix || '').toUpperCase();
   for (const line of body.split('\n')) {
@@ -171,6 +199,7 @@ const ROUTES = {
   '/api/rdap': apiRdap,
   '/api/asn': apiAsn,
   '/api/hibp-password': apiHibpPassword,
+  '/api/hibp-email': apiHibpEmail,
 };
 
 // ---------- static file serving ----------
