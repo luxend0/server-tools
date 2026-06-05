@@ -23,7 +23,7 @@ function Input({ spec, value, onChange }) {
     return (
       <Field.Root>
         <Field.Label>{spec.label}</Field.Label>
-        <select value={value} onChange={(e) => set(e.target.value)} className="select">
+        <select value={value} onChange={(e) => set(e.target.value)}>
           {spec.options.map((o) => <option key={o} value={o}>{o}</option>)}
         </select>
       </Field.Root>

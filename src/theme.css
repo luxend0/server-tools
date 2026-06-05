@@ -10,8 +10,8 @@
   --bg-inset:#0a0a0b;   /* output wells */
   --ink:     #e9e9e6;   /* primary text */
   --ink-2:   #b7b7b3;   /* secondary */
-  --dim:     #7c7c79;   /* muted */
-  --faint:   #4c4c4e;   /* very muted / ghost */
+  --dim:     #8a8a87;   /* muted (AA ~5.3:1 on bg) */
+  --faint:   #5e5e5c;   /* ghost / decorative glyphs */
   --line:    #232326;   /* hairline separators */
   --bord:    #38383c;   /* visible borders */
   --bord-2:  #565660;   /* strong borders / hover */
@@ -52,6 +52,10 @@ body::before {
 * { scrollbar-width: thin; scrollbar-color: var(--bord) var(--bg); }
 
 a { color: inherit; text-decoration: none; }
+
+/* keyboard focus — visible ring in the brutalist idiom (zero-radius, accent) */
+:focus-visible { outline: 2px solid var(--hi); outline-offset: 2px; }
+.search-bar:focus-within { border-color: var(--hi); box-shadow: inset 0 0 0 1px var(--hi); }
 
 /* blinking block cursor */
 @keyframes blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
@@ -125,7 +129,7 @@ input, textarea, select {
   border: 1px solid var(--bord); border-radius: 0; font-family: var(--mono);
   font-size: 13px; outline: none; transition: border-color .08s, box-shadow .08s;
 }
-input::placeholder, textarea::placeholder { color: var(--faint); }
+input::placeholder, textarea::placeholder { color: var(--dim); }
 textarea { min-height: 5rem; resize: vertical; line-height: 1.5; }
 input:focus, textarea:focus, select:focus { border-color: var(--hi); box-shadow: inset 0 0 0 1px var(--hi); }
 select { cursor: pointer; appearance: none;
@@ -184,7 +188,7 @@ button:disabled { opacity: .4; cursor: default; transform: none; background: var
 .tile-id::before { content: "› "; color: var(--faint); }
 .tile:hover .tile-id::before { content: "› "; color: var(--inv-fg); }
 .tile-title { font-weight: 700; font-size: 13px; letter-spacing: .01em; }
-.tile-kw { margin-top: auto; font-size: 10px; color: var(--faint); text-transform: uppercase; letter-spacing: .08em;
+.tile-kw { margin-top: auto; font-size: 10px; color: var(--dim); text-transform: uppercase; letter-spacing: .08em;
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .empty-msg { padding: 2.5rem 0; text-align: center; color: var(--dim); }
 
