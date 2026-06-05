@@ -2,6 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { parsePwnedRange } from './server.js';
 import { hibpEmailConfigured } from './server.js';
+import { reverseIp, classifyZone } from './server.js';
 
 test('parsePwnedRange counts a matching suffix', () => {
   // body lines are "SUFFIX:COUNT" (suffix = SHA1 hash minus first 5 chars)
@@ -17,4 +18,14 @@ test('hibpEmailConfigured reflects env presence', () => {
   assert.equal(hibpEmailConfigured(''), false);
   assert.equal(hibpEmailConfigured(undefined), false);
   assert.equal(hibpEmailConfigured('abc123'), true);
+});
+
+test('reverseIp builds the DNSBL query label', () => {
+  assert.equal(reverseIp('1.2.3.4'), '4.3.2.1');
+});
+
+test('classifyZone tags botnet vs spam lists', () => {
+  assert.equal(classifyZone('dnsbl.dronebl.org'), 'botnet');
+  assert.equal(classifyZone('cbl.abuseat.org'), 'botnet');
+  assert.equal(classifyZone('bl.spamcop.net'), 'spam');
 });

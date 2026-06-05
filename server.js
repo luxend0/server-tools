@@ -190,6 +190,53 @@ async function apiHibpPassword({ prefix, suffix }) {
   } finally { clearTimeout(timer); }
 }
 
+export const reverseIp = (ip) => ip.split('.').reverse().join('.');
+
+const BOTNET_ZONES = new Set(['dnsbl.dronebl.org', 'cbl.abuseat.org', 'xbl.spamhaus.org']);
+export function classifyZone(zone) {
+  if (BOTNET_ZONES.has(zone) || /drone|cbl|xbl|bot/i.test(zone)) return 'botnet';
+  return 'spam';
+}
+
+const REP_ZONES = [
+  'zen.spamhaus.org', 'cbl.abuseat.org', 'dnsbl.dronebl.org',
+  'bl.spamcop.net', 'b.barracudacentral.org',
+];
+
+async function apiReputation({ ip }) {
+  if (net.isIP(ip) !== 4) throw new Error('Bitte IPv4');
+  const rev = reverseIp(ip);
+  const listings = await Promise.all(REP_ZONES.map(async (zone) => {
+    const q = `${rev}.${zone}`;
+    try {
+      const codes = await dns.resolve4(q);
+      let reason = null;
+      try { reason = (await dns.resolveTxt(q)).map((t) => t.join('')).join(' '); } catch { /* none */ }
+      return { zone, listed: true, kind: classifyZone(zone), codes, reason };
+    } catch (e) {
+      if (e.code === 'ENOTFOUND' || e.code === 'ENODATA') return { zone, listed: false, kind: classifyZone(zone) };
+      return { zone, listed: false, kind: classifyZone(zone), error: e.code || String(e) };
+    }
+  }));
+  let ptr = null;
+  try { ptr = await dns.reverse(ip); } catch { ptr = null; }
+  let abuse = null;
+  try {
+    const rdap = await rdapFetch('https://rdap.org/ip/' + encodeURIComponent(ip));
+    const emails = [];
+    for (const ent of rdap.entities || [])
+      for (const v of (ent.vcardArray?.[1] || []))
+        if (v[0] === 'email') emails.push(v[3]);
+    abuse = emails[0] || null;
+  } catch { abuse = null; }
+
+  const botnet = listings.filter((l) => l.listed && l.kind === 'botnet').length;
+  const spam = listings.filter((l) => l.listed && l.kind === 'spam').length;
+  return { ip, ptr, abuse, listings,
+    summary: { botnet, spam,
+      verdict: botnet > 0 ? 'kompromittiert/botnet-verdächtig' : spam > 0 ? 'auf Spam-Listen' : 'sauber' } };
+}
+
 const ROUTES = {
   '/api/dns': apiDns,
   '/api/dns-all': apiDnsAll,
@@ -200,6 +247,7 @@ const ROUTES = {
   '/api/asn': apiAsn,
   '/api/hibp-password': apiHibpPassword,
   '/api/hibp-email': apiHibpEmail,
+  '/api/reputation': apiReputation,
 };
 
 // ---------- static file serving ----------
