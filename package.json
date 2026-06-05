@@ -9,7 +9,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "start": "node server.js",
-    "test": "vitest run"
+    "test": "vitest run && node --test server.test.js"
   },
   "engines": {
     "node": ">=18"
