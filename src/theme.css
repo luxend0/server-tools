@@ -101,3 +101,6 @@ footer .safe { color: var(--ok); font-weight: 600; }
 .result.ok { color: var(--ok); }
 [data-part="trigger"][data-selected] { font-weight: 700; }
 .breaches { line-height: 1.6; }
+.findings li, .breaches li { margin: .4rem 0; }
+.sev-high { color: #ff8a8a; } .sev-medium { color: #ffcf8a; } .sev-low { color: #cdd0ff; }
+code { background: #0003; padding: 0 .3em; border-radius: 4px; }
