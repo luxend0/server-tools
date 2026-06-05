@@ -245,25 +245,25 @@ exactly these edits:
      `import { api } from '../lib/api.js';`
   2. Replace the closing `window.TOOLS = [ ... ];` assignment's left-hand side with
      `export const TOOLS = [ ... ];` (array contents unchanged).
-  3. Find the category constants used in the array (the `ED/CG/DF/...` identifiers).
-     Keep their `const ED = 'ED'` (or string) declarations as-is, and add a labels
-     map exported for the UI. Use the real labels already documented in `README.md`:
+  3. **Category model (read `public/tools.js` line ~168 first):** the existing
+     constants already hold the *display labels* —
+     `const ED = 'Encode / Decode', CG = 'Crypto / Generatoren', DF = 'Daten / Format',
+     TX = 'Text', CC = 'Farbe / CSS', MA = 'Mathe / Rechner', NW = 'Netzwerk-Tools',
+     NB = 'Netzwerk (Backend)';` — and every tool's `cat:` field is one of these
+     constants, so `tool.cat` is already the human-readable label. Keep that `const …`
+     line **as-is**. Do NOT invent an abbreviation→label map. Instead export an
+     ordered list of the categories (drives section order in the UI):
 ```js
-export const CATS = {
-  ED: 'Encode / Decode', CG: 'Crypto / Generatoren', DF: 'Daten / Format',
-  TX: 'Text', CL: 'Farbe / CSS', MA: 'Mathe / Rechner',
-  NO: 'Netzwerk (offline)', NB: 'Netzwerk (Backend, passiv)',
-};
+export const CAT_ORDER = [ED, CG, DF, TX, CC, MA, NW, NB];
 ```
-  > Confirm the actual category constant names/values by reading `public/tools.js`
-  > (the `cat: XX` values on each tool). Make `CATS` keys match those values exactly;
-  > if a category constant holds a string other than its name, key `CATS` by that string.
+  > These 8 constants are the only `cat:` values used. If your copy of `public/tools.js`
+  > shows different constant names/values, mirror exactly what's there.
 
 - [ ] **Step 3: Sanity import check**
 
 Run:
 ```bash
-node --input-type=module -e "import('./src/tools/index.js').then(m=>console.log('tools', m.TOOLS.length, 'cats', Object.keys(m.CATS).length)).catch(e=>{console.error(e);process.exit(1)})"
+node --input-type=module -e "import('./src/tools/index.js').then(m=>console.log('tools', m.TOOLS.length, 'cats', m.CAT_ORDER.length)).catch(e=>{console.error(e);process.exit(1)})"
 ```
 Expected: prints e.g. `tools 72 cats 8` with no error. If something is undefined, it
 means a helper got dropped during the copy — re-add it. Fix until clean.
@@ -383,7 +383,7 @@ export default function ToolCard({ tool }) {
 
 ```jsx
 import { useMemo, useState } from 'react';
-import { TOOLS, CATS } from '../tools/index.js';
+import { TOOLS, CAT_ORDER } from '../tools/index.js';
 import ToolCard from '../components/ToolCard.jsx';
 
 export default function Tools() {
@@ -406,9 +406,9 @@ export default function Tools() {
           onChange={(e) => setQ(e.target.value)} />
         <span className="count">{filtered.length} / {TOOLS.length}</span>
       </div>
-      {Object.keys(byCat).map((cat) => (
+      {CAT_ORDER.filter((cat) => byCat[cat]).map((cat) => (
         <section key={cat}>
-          <h2>{CATS[cat] || cat}</h2>
+          <h2>{cat}</h2>
           <div className="grid">
             {byCat[cat].map((t) => <ToolCard key={t.id} tool={t} />)}
           </div>
