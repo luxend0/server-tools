@@ -88,3 +88,11 @@ footer .safe { color: var(--ok); font-weight: 600; }
   .layout { grid-template-columns: 1fr; }
   .nav { flex-direction: row; flex-wrap: wrap; gap: .3rem; }
 }
+
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1rem; }
+.card { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 1rem; }
+.card h3 { margin: 0 0 .6rem; } .actions { display: flex; flex-wrap: wrap; gap: .4rem; margin: .6rem 0; }
+.result { background: #0000003a; padding: .6rem; border-radius: 8px; white-space: pre-wrap; word-break: break-word; }
+.result.error { color: var(--err); } .result-wrap { position: relative; }
+.copy { position: absolute; right: .4rem; top: .4rem; }
+.search { width: 100%; max-width: 480px; padding: .5rem .8rem; }
