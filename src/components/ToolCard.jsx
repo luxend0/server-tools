@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Field } from '@ark-ui/react/field';
 import { Checkbox } from '@ark-ui/react/checkbox';
 import Result from './Result.jsx';
@@ -35,6 +35,13 @@ function Input({ spec, value, onChange }) {
         <Checkbox.Label>{spec.label}</Checkbox.Label>
       </Checkbox.Root>
     );
+  if (spec.type === 'color')
+    return (
+      <Field.Root>
+        <Field.Label>{spec.label}</Field.Label>
+        <Field.Input type="color" value={value} onChange={(e) => set(e.target.value)} />
+      </Field.Root>
+    );
   return (
     <Field.Root>
       <Field.Label>{spec.label}</Field.Label>
@@ -62,6 +69,18 @@ export default function ToolCard({ tool }) {
       setPending(false);
     }
   };
+  // Live tools (CSS generators marked live:true) re-run their first action as
+  // inputs change, updating both the preview box and the text output in real time.
+  useEffect(() => {
+    if (!tool.live || !tool.actions[0]) return;
+    try {
+      const r = tool.actions[0].run(values, { preview: previewRef.current });
+      setOut({ value: r, error: null });
+    } catch (e) {
+      setOut({ value: null, error: e.message || String(e) });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [values]);
   return (
     <section className="card" id={tool.id}>
       <h3>{tool.title}</h3>

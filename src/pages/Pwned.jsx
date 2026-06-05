@@ -33,6 +33,7 @@ function EmailTab() {
   const [email, setEmail] = useState('');
   const [state, setState] = useState({ status: 'idle', data: null, error: '' });
   const run = async () => {
+    if (!email) return;
     setState({ status: 'loading', data: null, error: '' });
     try { const data = await api('/api/hibp-email', { email });
       setState({ status: 'done', data, error: '' }); }

@@ -106,3 +106,77 @@ footer .safe { color: var(--ok); font-weight: 600; }
 code { background: #0003; padding: 0 .3em; border-radius: 4px; }
 .home-card { text-decoration: none; color: inherit; display: block; }
 .home-card:hover { border-color: var(--accent); }
+
+/* ===================== form controls (restored from the original dark-lavender theme) ===================== */
+input, textarea, select {
+  width: 100%; padding: .5rem .6rem;
+  background: var(--bg-soft); color: var(--text);
+  border: 1px solid var(--border); border-radius: var(--radius-sm);
+  font-family: ui-monospace, "JetBrains Mono", "Fira Code", monospace;
+  font-size: .85rem; outline: none; transition: border-color .12s, box-shadow .12s;
+}
+textarea { min-height: 4.2rem; resize: vertical; }
+input:focus, textarea:focus, select:focus { border-color: var(--accent-dim); box-shadow: 0 0 0 3px rgba(167,139,250,.15); }
+select { cursor: pointer; }
+input[type="color"] { height: 34px; padding: 2px; cursor: pointer; }
+input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--accent); cursor: pointer; }
+
+/* ===================== buttons ===================== */
+button {
+  width: auto; padding: .42rem .8rem; font-size: .82rem; font-weight: 550; cursor: pointer;
+  color: var(--text); background: var(--panel-2);
+  border: 1px solid var(--border-hi); border-radius: var(--radius-sm);
+  font-family: inherit; transition: all .12s;
+}
+button:hover { border-color: var(--accent-dim); color: #fff; }
+button:active { transform: translateY(1px); }
+button:disabled { opacity: .5; cursor: default; transform: none; }
+.actions button:first-child {
+  background: linear-gradient(135deg, var(--accent), var(--accent-dim));
+  border-color: transparent; color: #14101f; font-weight: 650;
+}
+.actions button:first-child:hover { filter: brightness(1.08); color: #14101f; }
+
+/* ===================== search bar (Tools page) ===================== */
+.search-wrap { display: flex; gap: 1rem; align-items: center; margin-bottom: 1.2rem; }
+.search { border-radius: 999px; }
+.count { margin-left: auto; font-size: .8rem; color: var(--muted); white-space: nowrap; }
+
+/* ===================== Ark UI Field + Checkbox parts ===================== */
+[data-scope="field"][data-part="root"] { margin-bottom: .5rem; }
+[data-scope="field"][data-part="label"] { display: block; font-size: .76rem; color: var(--muted); margin-bottom: .2rem; }
+[data-scope="checkbox"][data-part="root"] { display: inline-flex; align-items: center; gap: .4rem; margin: .15rem .9rem .35rem 0; cursor: pointer; }
+[data-scope="checkbox"][data-part="control"] {
+  width: 16px; height: 16px; flex: none;
+  border: 1px solid var(--border-hi); border-radius: 4px;
+  background: var(--bg-soft); transition: background .12s, border-color .12s;
+}
+[data-scope="checkbox"][data-part="control"][data-state="checked"],
+[data-scope="checkbox"][data-part="control"][data-checked] { background: var(--accent); border-color: var(--accent); }
+[data-scope="checkbox"][data-part="label"] { font-size: .82rem; color: var(--text); }
+
+/* ===================== Ark UI Tabs (pwned / infected) ===================== */
+[data-scope="tabs"][data-part="list"] { display: flex; gap: .4rem; border-bottom: 1px solid var(--border); margin-bottom: 1rem; }
+[data-scope="tabs"][data-part="trigger"] {
+  background: transparent; border: none; border-bottom: 2px solid transparent;
+  border-radius: 0; color: var(--muted); padding: .5rem .8rem; font-weight: 600;
+}
+[data-scope="tabs"][data-part="trigger"]:hover { color: var(--text); }
+[data-scope="tabs"][data-part="trigger"][data-selected] { color: var(--text); border-bottom-color: var(--accent); }
+
+/* ===================== result / output (richer) ===================== */
+.result {
+  margin: 0; font-family: ui-monospace, monospace; font-size: .8rem;
+  background: #0b0a12; border: 1px solid var(--border); color: #d7d2ea;
+  max-height: 320px; overflow: auto;
+}
+.result.error { background: rgba(251,113,133,.09); border-color: rgba(251,113,133,.4); color: var(--err); }
+.copy { width: auto; padding: .2rem .45rem; font-size: .72rem; background: var(--panel); border: 1px solid var(--border); }
+
+/* ===================== preview (CSS generators) ===================== */
+.preview {
+  margin-top: .55rem; height: 90px; min-height: 90px; border-radius: var(--radius-sm);
+  border: 1px solid var(--border); display: flex; align-items: center; justify-content: center;
+  color: var(--muted); font-size: .8rem;
+  background: repeating-conic-gradient(#1b1830 0% 25%, #15131f 0% 50%) 50% / 18px 18px;
+}

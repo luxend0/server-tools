@@ -151,7 +151,9 @@ async function apiHibpEmail({ email }) {
       headers: { 'hibp-api-key': HIBP_KEY, 'user-agent': 'server-tools' } });
     if (r.status === 404) return { configured: true, breaches: [] }; // none found
     if (!r.ok) throw new Error('HIBP HTTP ' + r.status);
-    const list = await r.json();
+    const text = await r.text();
+    if (text.length > 500_000) throw new Error('Antwort zu groß');
+    const list = JSON.parse(text);
     const breaches = (Array.isArray(list) ? list : []).map((b) => ({
       name: b.Name, title: b.Title, date: b.BreachDate, count: b.PwnCount,
       data: b.DataClasses || [],
@@ -259,7 +261,7 @@ function serveStatic(pathname, res) {
   let rel = decodeURIComponent(pathname);
   if (rel === '/' || rel === '') rel = '/index.html';
   let fp = path.join(PUBLIC, rel);
-  if (!fp.startsWith(PUBLIC)) { res.writeHead(403).end('Forbidden'); return; }
+  if (fp !== PUBLIC && !fp.startsWith(PUBLIC + path.sep)) { res.writeHead(403).end('Forbidden'); return; }
   fs.readFile(fp, (err, data) => {
     if (err) {
       // SPA fallback: serve index.html for client-side routes (no file extension)
