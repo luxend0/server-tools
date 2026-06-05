@@ -1,3 +1,6 @@
+/* SOURCE OF TRUTH for the dark-lavender theme.
+   public/style.css is a legacy copy kept only for the Task 5 parity check and
+   is deleted there — edit colours HERE, not in public/style.css. */
 :root {
   --bg:        #0e0d16;
   --bg-soft:   #14121f;
@@ -69,7 +72,7 @@ header {
 /* ---------- nav ---------- */
 .nav { display: flex; flex-direction: column; gap: 2px; padding: 1rem 0.5rem; }
 .navlink { padding: 0.5rem 0.8rem; border-radius: 8px; text-decoration: none; color: inherit; }
-.navlink.active { background: var(--accent, #b39ddb); color: #1a1626; font-weight: 600; }
+.navlink.active { background: var(--accent); color: #1a1626; font-weight: 600; }
 
 /* ---------- footer ---------- */
 footer {

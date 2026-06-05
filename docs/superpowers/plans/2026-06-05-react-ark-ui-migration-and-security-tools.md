@@ -6,7 +6,7 @@
 
 **Architecture:** Vite + React (JSX) frontend with `react-router-dom` routes (`/`, `/tools`, `/pwned`, `/infected`) and `@ark-ui/react` headless components styled with the ported dark-lavender CSS. The 72 existing tools stay as a declarative data model rendered by one generic `<ToolCard>` component (the old `app.js` engine reborn). The existing `server.js` is kept passive and extended with three fixed-upstream proxy endpoints. The offline IOC analyzer and the k-anonymity password hashing run 100% in the browser.
 
-**Tech Stack:** Node (built-in http, zero runtime deps in `server.js`), Vite, React 18, `@ark-ui/react`, `react-router-dom`, Vitest + Testing Library + jsdom.
+**Tech Stack:** Node (built-in http, zero runtime deps in `server.js`), Vite, React 19, `@ark-ui/react`, `react-router-dom`, Vitest + Testing Library + jsdom.
 
 ---
 
