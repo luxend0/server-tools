@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Server Tools</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <div class="brand">🛠 <span>Server Tools</span></div>
+  <div class="search-wrap">
+    <input id="search" type="text" placeholder="Tool suchen…  ( / )" autocomplete="off">
+  </div>
+  <div class="count" id="count"></div>
+</header>
+
+<div class="layout">
+  <aside id="nav"></aside>
+  <main id="app"></main>
+</div>
+
+<footer>
+  <span class="safe">🔒 Passiv &amp; abuse-sicher</span> — Offline-Tools laufen im Browser; das Backend spricht nur mit DNS-Resolvern &amp; RDAP. Keine npm-Dependencies, kein Port-Scanner, keine SSRF.
+</footer>
+
+<script src="tools.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

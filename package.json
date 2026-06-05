@@ -1,0 +1,12 @@
+{
+  "name": "server-tools",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Passive server/DNS/dev tools hub — zero dependencies",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
