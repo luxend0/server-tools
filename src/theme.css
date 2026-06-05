@@ -104,3 +104,5 @@ footer .safe { color: var(--ok); font-weight: 600; }
 .findings li, .breaches li { margin: .4rem 0; }
 .sev-high { color: #ff8a8a; } .sev-medium { color: #ffcf8a; } .sev-low { color: #cdd0ff; }
 code { background: #0003; padding: 0 .3em; border-radius: 4px; }
+.home-card { text-decoration: none; color: inherit; display: block; }
+.home-card:hover { border-color: var(--accent); }
