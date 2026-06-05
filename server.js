@@ -133,6 +133,35 @@ async function apiAsn({ asn }) {
   return rdapFetch('https://rdap.org/autnum/' + encodeURIComponent(n));
 }
 
+const HIBP_PW_HOST = 'https://api.pwnedpasswords.com';
+
+export function parsePwnedRange(body, suffix) {
+  suffix = String(suffix || '').toUpperCase();
+  for (const line of body.split('\n')) {
+    const [s, c] = line.trim().split(':');
+    if (s && s.toUpperCase() === suffix) return parseInt(c, 10) || 0;
+  }
+  return 0;
+}
+
+async function apiHibpPassword({ prefix, suffix }) {
+  if (!/^[0-9A-Fa-f]{5}$/.test(String(prefix || ''))) throw new Error('prefix muss 5 Hex-Zeichen sein');
+  if (!/^[0-9A-Fa-f]{35}$/.test(String(suffix || ''))) throw new Error('suffix muss 35 Hex-Zeichen sein');
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), 8000);
+  try {
+    const r = await fetch(`${HIBP_PW_HOST}/range/${prefix.toUpperCase()}`,
+      { signal: ctrl.signal, headers: { 'Add-Padding': 'true' } });
+    if (!r.ok) throw new Error('HIBP HTTP ' + r.status);
+    const text = await r.text();
+    if (text.length > 1_000_000) throw new Error('Antwort zu groß');
+    return { count: parsePwnedRange(text, suffix) };
+  } catch (e) {
+    if (e.name === 'AbortError') throw new Error('Timeout (HIBP nicht erreichbar)');
+    throw e;
+  } finally { clearTimeout(timer); }
+}
+
 const ROUTES = {
   '/api/dns': apiDns,
   '/api/dns-all': apiDnsAll,
@@ -141,6 +170,7 @@ const ROUTES = {
   '/api/email': apiEmail,
   '/api/rdap': apiRdap,
   '/api/asn': apiAsn,
+  '/api/hibp-password': apiHibpPassword,
 };
 
 // ---------- static file serving ----------
