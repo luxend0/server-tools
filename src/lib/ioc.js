@@ -22,39 +22,39 @@ export function analyze(text) {
 
     // miner names anywhere
     if (MINER_NAMES.test(line))
-      pushUnique(findings, { severity: 'high', title: 'Bekannter Miner/Malware-Name',
+      pushUnique(findings, { severity: 'high', title: 'Known miner / malware name',
         detail: line, line });
 
     // execution from suspicious dirs
     if (SUS_DIRS.test(line))
-      pushUnique(findings, { severity: 'high', title: 'Ausführung aus verdächtigem Verzeichnis',
+      pushUnique(findings, { severity: 'high', title: 'Execution from a suspicious directory',
         detail: line, line });
 
     // curl|sh cron / shell pipe
     if (PIPE_SHELL.test(line))
-      pushUnique(findings, { severity: 'high', title: 'Download nach Shell gepiped (cron/pipe/shell)',
+      pushUnique(findings, { severity: 'high', title: 'Download piped into a shell (cron/pipe/shell)',
         detail: line, line });
 
     // high CPU% from ps/top: find a number > 80 followed by a random-looking command
     const cpu = line.match(/\b(\d{2,4})(?:\.\d+)?\b/);
     if (cpu && Number(cpu[1]) >= 80 && RANDOM_NAME.test(line) && !/\b(java|node|postgres|mysql|chrome|firefox)\b/i.test(line))
-      pushUnique(findings, { severity: 'high', title: 'Hohe CPU-Last mit zufällig wirkendem Prozessnamen',
+      pushUnique(findings, { severity: 'high', title: 'High CPU usage with a random-looking process name',
         detail: line, line });
 
     // listening backdoor-ish port
     const port = line.match(/0\.0\.0\.0:(\d+)/);
     if (port && (BACKDOOR_PORTS.has(port[1]) || NC_LIKE.test(line)))
-      pushUnique(findings, { severity: 'medium', title: 'Verdächtiger lauschender Port',
+      pushUnique(findings, { severity: 'medium', title: 'Suspicious listening port',
         detail: line, line });
 
     // reverse shell tool
     if (NC_LIKE.test(line) && /-e\b|\/bin\/(ba)?sh|>&/.test(line))
-      pushUnique(findings, { severity: 'high', title: 'Mögliche Reverse Shell',
+      pushUnique(findings, { severity: 'high', title: 'Possible reverse shell',
         detail: line, line });
 
     // suspicious accepted root logins from auth.log
     if (/Accepted (password|publickey) for root/i.test(line))
-      pushUnique(findings, { severity: 'medium', title: 'Root-Login akzeptiert',
+      pushUnique(findings, { severity: 'medium', title: 'Root login accepted',
         detail: line, line });
   }
   return findings;

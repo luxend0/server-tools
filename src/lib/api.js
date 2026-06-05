@@ -5,7 +5,7 @@ export async function api(path, body) {
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify(body),
   });
-  let j; try { j = await r.json(); } catch { throw new Error('Ungültige Serverantwort'); }
+  let j; try { j = await r.json(); } catch { throw new Error('Invalid server response'); }
   if (!r.ok) throw new Error(j.error || ('HTTP ' + r.status));
   return j;
 }
